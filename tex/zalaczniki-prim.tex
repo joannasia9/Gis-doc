@@ -1,0 +1,335 @@
+\newpage
+\fancyhead[C]{ZAŁĄCZNIKI}
+\fancyhead[L]{}
+\fancyhead[R]{}
+\begin{center}
+	\textbf{Załącznik 1.} Kod źródłowy algorytmu Prima
+\end{center}
+
+\begin{lstlisting}
+	public class PrimAlgorithm{
+	/**
+	* Element losowosci
+	*/
+	Random rand;
+	/**
+	* Lista odwiedzonych wierzcholkow
+	*/
+	private ArrayList<Integer> visitedVertices;
+	
+	/**
+	* Lista wszystkich wierzcholkow
+	*/
+	private ArrayList<Edge> adjacencyEdgesList;
+	
+	
+	/**
+	* Konstruktor
+	* Odpowiada za wykonanie poszczegolnych krokow algorytmu
+	*
+	* @param  graph  macierz sasiedztwa reprezentujaca graf
+	*
+	*/
+	public PrimAlgorithm(final int[][] graph){
+	this.adjacencyEdgesList = new ArrayList<>();
+	
+	this.visitedVertices = new ArrayList<>();
+	
+	/**
+	* Zbior krawedzi
+	* Reprezentuje minimalne drzewo rozpinajace
+	*/
+	Set<Edge> minSpanningTree = new HashSet<>();
+	
+	/**
+	* Zmienna pomocnicza
+	* Lista krawedzi
+	* Reprezentuje krawedzie incydentne do odwiedzonych wierzcholkow grafu
+	*/
+	ArrayList<Edge> adjacencyEdges;
+	
+	/**
+	* Zmienna pomocnicza
+	* Element odpowiedzialny za losowy wybor wierzcholka poczatkowego
+	*/
+	this.rand = new Random();
+	
+	/**
+	* Losowy wybor wierzcholka poczatkowego
+	* Z zakresu od 0 do n-1,
+	* gdzie n-liczba wierzcholkow grafu
+	*/
+	int startV = rand.nextInt(graph.length-1);
+	
+	/**
+	* Oznaczenie wierzcholka startowego jako odwiedzony
+	* Dodanie wierzcholka startV do listy odwiedzonych wierzcholkow
+	*/
+	setVertexVisited(startV,visitedVertices);
+	
+	
+	/**
+	* Pobranie do zmiennej adjacencyEdges listy krawedzi incydentnych do startV
+	*/
+	adjacencyEdges = getAllAdjacencyEdges(startV,graph, adjacencyEdgesList);
+	
+	/**
+	* Petla warunkowa while()
+	* Wykonuje sie dopoki lista odwiedzonych wierzcholkow visitedVertices
+	* nie zawiera wszystkich wierzcholkow grafu
+	*/
+	while(visitedVertices.size()!= graph.length) {
+	/**
+	* Zmienna reprezentujaca krawedz z listy krawedzi incydentnych
+	* do punktow odwiedzonych adjacencyEdges, ktora ma minimalna wage
+	*/
+	Edge minEdge = adjacencyEdges.get(0);
+	/**
+	* Instrukcja warunkowa if()
+	* Pod warunkiem, ze lista odwiedzonych wierzcholkow visitedVertices
+	* nie zawiera wierzcholka koncowego krawedzi minEdge:
+	*
+	* Do MST zostaje dodana krawedz minEdge
+	* Wierzcholek startV zmienia wartosc na wierzcholek koncowy minEdge
+	* Krawedz minEdge zostaje usunieta z listy krawedzi incydentnych
+	* do rozpatrzenia
+	* Lista krawedzi incydentnych adjacencyEdges zostaje zaktualizowana 
+	* o krawedzie
+	* incydentne do wierzcholka startV
+	*
+	* W przeciwnym wypadku:
+	* Krawedz minEdge zostaje usunieta z listy krawedzi do rozpatrzenia
+	*/
+	if(!visitedVertices.contains(minEdge.getEnd())){
+	minSpanningTree.add(minEdge);
+	setVertexVisited(minEdge.getEnd(), visitedVertices);
+	startV = minEdge.getEnd();
+	adjacencyEdges.remove(minEdge);
+	adjacencyEdges = getAllAdjacencyEdges(startV,graph,adjacencyEdgesList);
+	} else adjacencyEdges.remove(minEdge); 	}
+	/**
+	* Wypisanie otrzymanego MST w konsoli
+	*/
+	printMST(minSpanningTree); }
+	/**
+	* @param vertex
+	* @param list
+	* Oznacza wierzcholek jako odwiedzony poprzez dodanie wierzcholka vertex
+	* do listy wierzcholkow odwiedzonych list
+	*/
+	private void setVertexVisited(int vertex, ArrayList<Integer> list){
+	/**
+	* Instrukcja warunkowa if()
+	* Blok instrukcji zostaje wykonany, gdy lista wierzcholkow odwiedzonych 
+	* nie zawiera jeszcze wierzcholka vertex
+	*/
+	if(!list.contains(vertex))
+	list.add(vertex);
+	}
+	
+	/**
+	*
+	* @param vertex
+	* @param graph
+	* @return
+	*
+	* Dodaje do listy adjacencyEdgesList krawedzie incydentne 
+	* do wierzcholka vertex, ktore nie tworza cyklu
+	*/
+	private ArrayList<Edge> getAllAdjacencyEdges(int vertex, 
+										int[][] graph, ArrayList<Edge> adjacencyEdgesList){
+	
+	/**
+	* Instrukcja iteracyjna for()
+	* Blok instrukcji jest wykonywany dla kazdego wierzcholka grafu
+	*/
+	for(int i=0; i<graph.length; i++){
+	/**
+	* Instrukcja warunkowa if()
+	* Operacja dodania krawedzi incydentnej do wierzcholka vertex 
+	* zostaje wykonana pod warunkiem, ze:
+	* Krawedz (vertex-i) istnieje, czyli jej waga jest rozna od 0 oraz
+	* Lista odwiedzonych wierzcholkow visitedVertices 
+	* nie zawiera jeszcze i-tego wierzcholka
+	*/
+	if(graph[vertex][i]!= 0 && !visitedVertices.contains(i))
+			adjacencyEdgesList.add(new Edge(vertex,i,graph[vertex][i]));
+	}
+	
+	/**
+	* Sortowanie otrzymanej listy krawedzi wzgledem wag
+	*/
+	Collections.sort(adjacencyEdgesList);
+	
+	return adjacencyEdgesList;
+	}
+	
+	/**
+	*
+	* @param set
+	*
+	* Wyswietla w konsoli liste krawedzi otrzymanego drzewa
+	* wraz z suma wag krawedzi
+	*/
+	private void printMST(Set<Edge> set){
+	int sum = 0;
+	for(Edge item : set){
+	System.out.println(item);
+	sum+=item.getWeight();
+	}
+	System.out.println("SUMA WAG WYNOSI: " + sum);
+	}
+\end{lstlisting}
+
+
+\begin{center}
+	\textbf{Załącznik 1.a.} Kod źródłowy klasy Edge
+\end{center}
+
+\begin{lstlisting}
+	/**
+	* Klasa Edge, ktorej obiekty reprezentuja krawedzie grafu
+	*/
+	private class Edge implements Comparable<Edge> {
+	/**
+	* Wierzcholek poczatkowy krawedzi
+	*/
+	private int start;
+	/**
+	* Wierzcholek koncowy krawedzi
+	*/
+	private int end;
+	/**
+	* Waga krawedzi (start - end)
+	*/
+	private int weight;
+	
+	/**
+	*
+	* @param s
+	* @param e
+	* @param w
+	*
+	* Konstruktor krawedzi
+	*/
+	Edge(int s, int e, int w){
+	setStart(s);
+	setEnd(e);
+	setWeight(w);
+	}
+	
+	private int getWeight(){
+	return weight;
+	}
+	
+	private int getStart() {
+	return start;
+	}
+	
+	private void setStart(int start) {
+	this.start = start;
+	}
+	
+	private int getEnd() {
+	return end;
+	}
+	
+	private void setEnd(int end) {
+	this.end = end;
+	}
+	
+	private void setWeight(int weight) {
+	this.weight = weight;
+	}
+	
+	/**
+	*
+	* @param e
+	* @return
+	* Metoda odpowiedzialna za porownywanie krawedzi
+	* Wykorzystywana podczas sortowania krawedzi w liscie
+	* @see Collections
+	*/
+	@Override
+	public int compareTo(Edge e) {
+	if (getWeight() < e.getWeight()){
+	return -1;
+	} else if (getWeight() > e.getWeight()) {
+	return 1;
+	}
+	return 0;
+	}
+	
+	/**
+	* @return
+	*
+	* Metoda odpowiedzialna za postac wypisanej w konsoli krawedzi
+	*/
+	@Override
+	public String toString() {
+	return String.format("%d--%d\tw:%d ", start, end, weight);
+	}
+	}
+\end{lstlisting}
+\newpage
+\begin{center}
+	\textbf{Załącznik 2.} Kod źródłowy modułu odpowiedzialnego za odczyt macierzy z pliku
+\end{center}
+
+\begin{lstlisting}
+	import java.io.*;
+	
+	public class GraphFileExtractor {
+	private Graph graph;
+	private int[][] adjacencyMatrix;
+	
+	public void getFileContent(int iterator) {
+	String home = System.getProperty("user.home");
+	File file = new File(home + File.separator + "Desktop" 
+											+ File.separator + "G" + iterator + ".txt");
+	
+	try {
+	BufferedReader br = new BufferedReader(new FileReader(file.getPath()));
+	String line = br.readLine();
+	initiateMatrix(line);
+	
+	int i = 0;
+	while (line != null) {
+	parseLine(i,line);
+	line = br.readLine();
+	i+=1;
+	}
+	
+	} catch (IOException e) {
+	e.printStackTrace();
+	}
+	}
+	
+	private void parseLine(int i, String line){
+	String delim = "\t";
+	String[] tokens = line.split(delim);
+	
+	for(int j=0; j<tokens.length;j++){
+	if(Integer.parseInt(tokens[j])!=0)
+	graph.addEdge(new Edge(i,j,Integer.parseInt(tokens[j])));
+	adjacencyMatrix[i][j] = Integer.parseInt(tokens[j]);
+	}
+	
+	}
+	
+	private void initiateMatrix(String line){
+	String delim = "\t";
+	String[] tokens = line.split(delim);
+	graph = new Graph(tokens.length);
+	adjacencyMatrix = new int[tokens.length][tokens.length];
+	}
+	
+	public Graph getGraph(){
+	return graph;
+	}
+	
+	public int[][] getAdjacencyMatrix(){
+	return adjacencyMatrix;
+	}
+	}
+\end{lstlisting}
