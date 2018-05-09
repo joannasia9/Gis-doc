@@ -1,0 +1,18 @@
+\section{Ogólne założenia dotyczące badań algorytmów}
+\begin{enumerate}
+	\item Algorytmy zostaną wykonane dla \textbf{grafów spójnych, nieskierowanych}
+	\item Działający program zostanie przetestowany na przypadkach, dla których znane są poprawne rozwiązania 
+	\item Na wejściu każdego z algorytmów dany jest graf w postaci \textbf{macierzy wag} o zadanej liczbie wierzchołków \emph{N}(ang. nodes) oraz \emph{E} krawędzi (ang. edges), gdzie $1 \leqslant N \leqslant 10000$) oraz $1 \leqslant M \leqslant 100000$.
+	\begin{center}
+		\textbf{Macierz sąsiedztwa}
+	\end{center}
+Graf reprezentujemy za pomocą macierzy kwadratowej \emph o stopniu \emph{n}, gdzie n oznacza liczbę wierzchołków w grafie. Macierz tą nazywamy macierzą sąsiedztwa (ang. adjacency matrix). Odwzorowuje ona połączenia wierzchołków krawędziami. Wiersze macierzy sąsiedztwa odwzorowują zawsze wierzchołki startowe krawędzi, a kolumny odwzorowują wierzchołki końcowe krawędzi. Komórka \emph{A[i,j]}, która znajduje się w\emph{ i-tym} wierszu i \emph{j-tej } kolumnie odwzorowuje krawędź łączącą wierzchołek startowy vi z wierzchołkiem końcowym \emph{$v_{j}$}. Jeśli \emph{A[i,j]} ma wartość 1, to dana krawędź istnieje. Jeśli \emph{text} ma wartość 0, to wierzchołek \emph{$v_{i}$} nie łączy się krawędzią z wierzchołkiem \emph{$v_{j}$}.
+\item Na wyjściu każdego z algorytmów otrzywana zostanie suma wag krawędzi MST
+\item W związku z tym, że wejście oraz wyjście obu algorytmów dotyczy tych samych danych, wyniki zostaną porównane
+\item Głównym elementem podlegającym porównaniu będzie czas wykonania obu algorytmów
+\item \textbf{Złożoność czasowa} -- ze względu na wykorzystane struktury danych, złożoność czasowa wybranych algorytmów powinna wynosić odpowiednio:
+\begin{itemize}
+	\item Dla algorytmu Prima: \emph{O(E$\cdot$ log N)}
+	\item Dla algorytmu Kruskala: \emph{O(E$\cdot$ log N)}
+\end{itemize}
+\end{enumerate}
